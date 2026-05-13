@@ -1,0 +1,9 @@
+{
+  "name": "godly-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Godly Tracker for Supreme values, eBay pricing, and item history",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
