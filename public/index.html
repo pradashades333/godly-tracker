@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Godly Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">GODLY TRACKER</p>
+          <h1>Track godly trade value against real eBay pricing without digging through messy listings.</h1>
+          <p>
+            Supreme stays in MM2 value units. eBay stays in euros. This board is tuned for quick scanning, pinned targets,
+            and price movement over time instead of dumping everything into identical cards.
+          </p>
+        </div>
+
+        <div class="hero-panel">
+          <button id="refreshButton" class="refresh-button" type="button">Refresh Market Data</button>
+          <p id="statusLine" class="status-line">Loading latest tracked data...</p>
+          <p id="setupLine" class="setup-line"></p>
+        </div>
+      </header>
+
+      <section class="summary-strip">
+        <div class="summary-card">
+          <span>Tracked items</span>
+          <strong id="trackedCount">0</strong>
+        </div>
+        <div class="summary-card">
+          <span>Best Supreme value</span>
+          <strong id="bestSupreme">-</strong>
+        </div>
+        <div class="summary-card">
+          <span>Cheapest eBay listing</span>
+          <strong id="cheapestEbay">-</strong>
+        </div>
+        <div class="summary-card">
+          <span>Last refresh</span>
+          <strong id="lastRefresh">-</strong>
+        </div>
+      </section>
+
+      <section class="toolbar">
+        <label class="search-shell" for="searchInput">
+          <span class="control-label">Search items</span>
+          <input id="searchInput" class="search-input" type="search" placeholder="Search by item name">
+        </label>
+
+        <label class="select-shell" for="categorySelect">
+          <span class="control-label">Category</span>
+          <select id="categorySelect" class="select-input">
+            <option value="all">All categories</option>
+          </select>
+        </label>
+
+        <label class="select-shell" for="sortSelect">
+          <span class="control-label">Sort</span>
+          <select id="sortSelect" class="select-input">
+            <option value="name">Name A-Z</option>
+            <option value="supreme-desc">Highest Supreme value</option>
+            <option value="ebay-asc">Lowest eBay price</option>
+            <option value="recent">Most recently checked</option>
+          </select>
+        </label>
+
+        <div class="results-summary">
+          <span class="control-label">Showing</span>
+          <strong id="resultsCount">0 items</strong>
+        </div>
+      </section>
+
+      <section id="favoritesSection" class="favorites-section hidden" aria-live="polite">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Pinned Shelf</p>
+            <h2 class="section-title">Favorites</h2>
+            <p class="section-copy">Keep the items you actually watch in one place.</p>
+          </div>
+          <strong id="favoritesCount" class="section-count">0</strong>
+        </div>
+        <div id="favoritesGrid" class="items-grid favorites-grid"></div>
+      </section>
+
+      <section class="all-items-section">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Full Board</p>
+            <h2 class="section-title">All Items</h2>
+            <p class="section-copy">Everything currently tracked from Supreme and eBay.</p>
+          </div>
+        </div>
+      </section>
+
+      <main id="itemsGrid" class="items-grid" aria-live="polite"></main>
+    </div>
+
+    <template id="cardTemplate">
+      <article class="item-card">
+        <div class="item-visual">
+          <img class="item-image hidden" alt="">
+          <div class="image-fallback">No image match yet</div>
+        </div>
+
+        <div class="card-body">
+          <div class="item-head">
+            <div>
+              <div class="badge-row">
+                <button class="favorite-button" type="button" aria-pressed="false" aria-label="Toggle favorite">Fav</button>
+                <span class="item-category"></span>
+              </div>
+              <h2 class="item-name"></h2>
+              <p class="item-meta"></p>
+              <p class="item-kicker"></p>
+            </div>
+            <div class="links">
+              <a class="supreme-link" target="_blank" rel="noreferrer">Supreme</a>
+              <a class="listing-link" target="_blank" rel="noreferrer">eBay</a>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-card">
+              <span class="metric-label">Supreme value</span>
+              <strong class="supreme-value">-</strong>
+              <p class="metric-note supreme-note">-</p>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Lowest eBay price</span>
+              <strong class="ebay-value">-</strong>
+              <p class="metric-note ebay-note">-</p>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Demand / rarity</span>
+              <strong class="demand-rarity">-</strong>
+              <p class="metric-note stability-note">-</p>
+            </div>
+          </div>
+
+          <div class="graph-panel">
+            <div class="graph-head">
+              <span>History</span>
+              <div class="legend">
+                <span class="legend-pill legend-ebay">eBay EUR</span>
+                <span class="legend-pill legend-supreme">Supreme value</span>
+              </div>
+            </div>
+            <p class="chart-state"></p>
+            <div class="chart-axis-head">
+              <span>Y-left: eBay price (EUR)</span>
+              <span>Y-right: Supreme value</span>
+            </div>
+            <div class="chart-wrap">
+              <canvas class="chart" width="640" height="260"></canvas>
+              <div class="chart-tooltip hidden"></div>
+              <div class="chart-empty hidden">Not enough history yet. Refresh over time to build the line.</div>
+            </div>
+            <p class="chart-axis-foot">X-axis: time</p>
+            <button class="chart-expand" type="button">Open detailed chart</button>
+          </div>
+
+          <div class="error-stack">
+            <p class="error-text supreme-error hidden"></p>
+            <p class="error-text ebay-error hidden"></p>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <div id="chartModal" class="chart-modal hidden" aria-hidden="true">
+      <div id="chartModalBackdrop" class="chart-modal-backdrop"></div>
+      <section class="chart-modal-panel" role="dialog" aria-modal="true" aria-labelledby="chartModalTitle">
+        <button id="chartModalClose" class="chart-modal-close" type="button" aria-label="Close detailed chart">X</button>
+        <div class="chart-modal-head">
+          <div>
+            <p id="chartModalCategory" class="eyebrow modal-eyebrow"></p>
+            <h2 id="chartModalTitle"></h2>
+            <p id="chartModalMeta" class="item-meta"></p>
+          </div>
+          <div class="chart-modal-stats">
+            <div class="modal-stat">
+              <span>Current Supreme</span>
+              <strong id="chartModalSupreme">-</strong>
+            </div>
+            <div class="modal-stat">
+              <span>Current eBay</span>
+              <strong id="chartModalEbay">-</strong>
+            </div>
+            <div class="modal-stat">
+              <span>Samples</span>
+              <strong id="chartModalSamples">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-modal-copy">
+          <p id="chartModalHistoryNote"></p>
+        </div>
+
+        <div class="chart-axis-head modal-axis-head">
+          <span>Y-left: eBay price (EUR)</span>
+          <span>Y-right: Supreme value</span>
+        </div>
+        <div class="chart-wrap chart-wrap-modal">
+          <canvas id="chartModalCanvas" class="chart chart-modal-canvas" width="1200" height="420"></canvas>
+          <div id="chartModalTooltip" class="chart-tooltip hidden"></div>
+          <div id="chartModalEmpty" class="chart-empty hidden">Not enough history yet. Keep refreshing to build a longer line.</div>
+        </div>
+        <p class="chart-axis-foot">X-axis: time</p>
+      </section>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
