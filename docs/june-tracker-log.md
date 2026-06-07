@@ -1,1 +1,2 @@
 - [2026-06-04 18:32:56+02:00] captured api follow-up.
+- [2026-06-07 10:07:01+02:00] checked price refresh path.
