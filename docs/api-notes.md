@@ -1,0 +1,1 @@
+- [2026-06-09 14:20:55] Sync client-side integration expectations for task 1.
