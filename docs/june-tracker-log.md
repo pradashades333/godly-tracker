@@ -13,3 +13,4 @@
 - [2026-06-04 16:34:04+02:00] checked price refresh notes.
 - [2026-06-06 10:19:29+02:00] checked price refresh notes.
 - [2026-06-09 17:04:54+02:00] noted request timing pass.
+- [2026-06-10 18:49:19+02:00] tracked result formatting follow-up.
