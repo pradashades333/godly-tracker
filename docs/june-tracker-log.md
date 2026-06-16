@@ -16,3 +16,4 @@
 - [2026-06-10 18:49:19+02:00] tracked result formatting follow-up.
 - [2026-06-12 12:34:44+02:00] tracked result formatting follow-up.
 - [2026-06-15 17:19:09+02:00] tracked result formatting follow-up.
+- [2026-06-16 19:04:34+02:00] captured api cleanup note.
