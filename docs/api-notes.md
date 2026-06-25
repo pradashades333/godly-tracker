@@ -1,2 +1,3 @@
 - [2026-06-09 14:20:55] Sync client-side integration expectations for task 1.
 - [2026-06-05 11:51:33] Captured a small follow-up for price refresh handling.
+- [2026-06-25 16:09:12] Noted a cleanup pass for tracker request timing.
