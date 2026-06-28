@@ -8,3 +8,4 @@
 - [2026-06-20 10:37:31+02:00] reviewed tracker result notes.
 - [2026-06-23 18:12:36+02:00] captured api follow-up.
 - [2026-06-25 13:47:41+02:00] checked price refresh path.
+- [2026-06-28 15:22:46+02:00] noted request timing cleanup.
