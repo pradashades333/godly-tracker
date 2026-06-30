@@ -23,3 +23,4 @@
 - [2026-06-25 13:04:14+02:00] noted request timing pass.
 - [2026-06-27 18:49:39+02:00] noted request timing pass.
 - [2026-06-29 10:34:04+02:00] checked price refresh notes.
+- [2026-06-30 19:19:29+02:00] reviewed tracker response path.
