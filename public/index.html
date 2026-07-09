@@ -11,13 +11,31 @@
   </head>
   <body>
     <div class="page-shell">
+      <nav class="top-nav" aria-label="Primary">
+        <button id="boardTabButton" class="top-tab is-active" type="button">Board</button>
+        <button id="valuesTabButton" class="top-tab" type="button">Values</button>
+        <button id="tradeTabButton" class="top-tab" type="button">Trade Checker</button>
+        <button id="inventoryTabButton" class="top-tab" type="button">Inventory Tracker</button>
+        <button id="sellerTabButton" class="top-tab" type="button">Seller Dashboard</button>
+        <button id="changesTabButton" class="top-tab" type="button">Recent Changes</button>
+        <button id="toolsTabButton" class="top-tab" type="button">Tools</button>
+      </nav>
+
+      <section class="ticker-shell" aria-label="Recent Supreme changes">
+        <div class="ticker-label">Recent Moves</div>
+        <div class="ticker-window">
+          <div id="tickerTrack" class="ticker-track"></div>
+        </div>
+      </section>
+
+      <section id="boardView">
       <header class="hero">
         <div class="hero-copy">
           <p class="eyebrow">GODLY TRACKER</p>
-          <h1>Godly Tracker compares in-game godly value against real eBay pricing.</h1>
+          <h1>Track MM2 godlies, trade value, and live listing prices in one place.</h1>
           <p>
-            Supreme stays in in-game value units. eBay stays in euros. Godly Tracker is tuned for quick scanning,
-            pinned targets, and price movement over time instead of dumping everything into identical cards.
+            Supreme stays in in-game value units. eBay stays in euros. The board is built for quick checks,
+            pinned watchlists, and seeing how items move over time without burying everything in noise.
           </p>
         </div>
 
@@ -99,6 +117,415 @@
       </section>
 
       <main id="itemsGrid" class="items-grid" aria-live="polite"></main>
+      </section>
+
+      <section id="valuesView" class="values-view hidden" aria-live="polite">
+        <header class="subpage-hero">
+          <div>
+            <p class="eyebrow">Value List</p>
+            <h2 class="subpage-title">Browse tracked values by category in a cleaner list view.</h2>
+            <p class="subpage-copy">
+              This view focuses on the tracked Supreme numbers first so it is easier to compare items without the heavier board layout.
+            </p>
+          </div>
+        </header>
+
+        <section class="values-toolbar">
+          <div id="valuesCategoryChips" class="chip-row"></div>
+        </section>
+
+        <section class="values-table-shell">
+          <div class="values-table-head values-table-row">
+            <span>Item</span>
+            <span>Category</span>
+            <span>Supreme</span>
+            <span>Range</span>
+            <span>eBay</span>
+            <span>Updated</span>
+          </div>
+          <div id="valuesTableBody" class="values-table-body"></div>
+        </section>
+      </section>
+
+      <section id="tradeView" class="trade-view hidden" aria-live="polite">
+        <header class="trade-hero">
+          <div>
+            <p class="eyebrow">Trade Checker</p>
+            <h2 class="trade-title">Check both sides of a trade with your tracked Supreme values.</h2>
+            <p class="trade-copy">
+              Pick up to four items for each side. Godly Tracker totals the Supreme values, shows the gap,
+              and makes it easier to see whether the trade is leaning your way.
+            </p>
+          </div>
+        </header>
+
+        <section class="trade-board">
+          <div class="trade-side">
+            <div class="trade-side-head">
+              <div>
+                <p class="eyebrow">Your Side</p>
+                <h3 class="trade-side-title">Weapons You Have</h3>
+                <p class="trade-side-copy">You may only add up to 4 different items.</p>
+              </div>
+            </div>
+            <div class="trade-side-board">
+              <div id="tradeHaveSlots" class="trade-slots"></div>
+              <aside class="trade-side-summary">
+                <div class="trade-total-card">
+                  <span>Total value</span>
+                  <strong id="tradeHaveTotal">0</strong>
+                </div>
+              </aside>
+            </div>
+          </div>
+
+          <div class="trade-side">
+            <div class="trade-side-head">
+              <div>
+                <p class="eyebrow">Their Side</p>
+                <h3 class="trade-side-title">Weapons They Offer</h3>
+                <p class="trade-side-copy">You may only add up to 4 different items.</p>
+              </div>
+            </div>
+            <div class="trade-side-board">
+              <div id="tradeWantSlots" class="trade-slots"></div>
+              <aside class="trade-side-summary">
+                <div class="trade-total-card">
+                  <span>Total value</span>
+                  <strong id="tradeWantTotal">0</strong>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        <section class="trade-summary-panel">
+          <div class="trade-summary-head">
+            <div>
+              <p class="eyebrow">Summary</p>
+              <h3 class="trade-side-title">Trade Result</h3>
+            </div>
+            <button id="tradeClearButton" class="refresh-button trade-clear-button" type="button">Clear Trade</button>
+          </div>
+
+          <div class="trade-summary-grid">
+            <div class="summary-card trade-summary-card">
+              <span>Your total</span>
+              <strong id="tradeSummaryHave">0</strong>
+            </div>
+            <div class="summary-card trade-summary-card">
+              <span>Their total</span>
+              <strong id="tradeSummaryWant">0</strong>
+            </div>
+            <div class="summary-card trade-summary-card">
+              <span>Difference</span>
+              <strong id="tradeSummaryDiff">0</strong>
+            </div>
+          </div>
+
+          <div id="tradeVerdict" class="trade-verdict is-neutral">
+            Add items on both sides to compare the trade.
+          </div>
+        </section>
+
+        <datalist id="tradeItemOptions"></datalist>
+      </section>
+
+      <section id="inventoryView" class="inventory-view hidden" aria-live="polite">
+        <header class="subpage-hero">
+          <div>
+            <p class="eyebrow">Inventory Tracker</p>
+            <h2 class="subpage-title">Track your inventory value, category mix, biggest items, and duplicate stacks.</h2>
+            <p class="subpage-copy">
+              Build your current inventory once, then Godly Tracker rolls that into live Supreme totals and a combined value trend using the history already stored for each item.
+            </p>
+          </div>
+        </header>
+
+        <section class="inventory-toolbar">
+          <div class="inventory-add-row">
+            <label class="search-shell inventory-search" for="inventorySearchInput">
+              <span class="control-label">Add inventory item</span>
+              <input id="inventorySearchInput" class="search-input" type="search" list="inventoryItemOptions" placeholder="Search an item name">
+            </label>
+
+            <label class="select-shell inventory-qty-shell" for="inventoryQuantityInput">
+              <span class="control-label">Quantity</span>
+              <input id="inventoryQuantityInput" class="select-input" type="number" min="1" step="1" value="1">
+            </label>
+
+            <button id="inventoryAddButton" class="refresh-button inventory-add-button" type="button">Add To Inventory</button>
+            <button id="inventoryClearButton" class="trade-clear-button inventory-clear-button" type="button">Clear Inventory</button>
+          </div>
+          <datalist id="inventoryItemOptions"></datalist>
+        </section>
+
+        <section class="inventory-summary-grid">
+          <div class="summary-card">
+            <span>Total inventory value</span>
+            <strong id="inventoryTotalValue">0</strong>
+          </div>
+          <div class="summary-card">
+            <span>Total stacks</span>
+            <strong id="inventoryTotalStacks">0</strong>
+          </div>
+          <div class="summary-card">
+            <span>Unique items</span>
+            <strong id="inventoryUniqueItems">0</strong>
+          </div>
+          <div class="summary-card">
+            <span>Top category</span>
+            <strong id="inventoryTopCategory">-</strong>
+          </div>
+        </section>
+
+        <section class="inventory-layout">
+          <div class="inventory-panel">
+            <div class="inventory-panel-head">
+              <div>
+                <p class="eyebrow">Your Holdings</p>
+                <h3 class="trade-side-title">Inventory Items</h3>
+              </div>
+            </div>
+            <div id="inventoryHoldingsList" class="inventory-holdings-list"></div>
+          </div>
+
+          <div class="inventory-panel">
+            <div class="inventory-panel-head">
+              <div>
+                <p class="eyebrow">Category Mix</p>
+                <h3 class="trade-side-title">Value By Category</h3>
+              </div>
+            </div>
+            <div id="inventoryCategoryList" class="inventory-stats-list"></div>
+          </div>
+
+          <div class="inventory-panel">
+            <div class="inventory-panel-head">
+              <div>
+                <p class="eyebrow">Biggest Items</p>
+                <h3 class="trade-side-title">Highest Value Stacks</h3>
+              </div>
+            </div>
+            <div id="inventoryBiggestList" class="inventory-stats-list"></div>
+          </div>
+
+          <div class="inventory-panel">
+            <div class="inventory-panel-head">
+              <div>
+                <p class="eyebrow">Duplicates</p>
+                <h3 class="trade-side-title">Most Duplicated Items</h3>
+              </div>
+            </div>
+            <div id="inventoryDuplicatesList" class="inventory-stats-list"></div>
+          </div>
+        </section>
+
+        <section class="inventory-chart-panel">
+          <div class="inventory-panel-head">
+            <div>
+              <p class="eyebrow">Inventory Trend</p>
+              <h3 class="trade-side-title">Value Change Over Time</h3>
+            </div>
+          </div>
+          <div class="inventory-chart-shell">
+            <div class="chart-axis-head inventory-axis-head">
+              <span>Y-axis: total inventory value</span>
+              <span id="inventoryChartRange">Using tracked Supreme history</span>
+            </div>
+            <svg id="inventoryChart" class="inventory-chart" viewBox="0 0 760 280" preserveAspectRatio="none" aria-label="Inventory value chart"></svg>
+            <p id="inventoryChartEmpty" class="inventory-chart-empty hidden">Add items with tracked history to build the inventory trend.</p>
+            <div class="chart-axis-foot">
+              <span>X-axis: time</span>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section id="sellerView" class="seller-view hidden" aria-live="polite">
+        <header class="subpage-hero">
+          <div>
+            <p class="eyebrow">Seller Dashboard</p>
+            <h2 class="subpage-title">Track stock, margins, revenue, and the items actually moving.</h2>
+            <p class="subpage-copy">
+              Save your selling entries here to keep an eye on inventory cost, projected sale value, profit, ROI, dead stock,
+              best-selling items, and monthly revenue in one place.
+            </p>
+          </div>
+        </header>
+
+        <section class="seller-toolbar">
+          <div class="seller-form-grid">
+            <label class="search-shell" for="sellerItemInput">
+              <span class="control-label">Item</span>
+              <input id="sellerItemInput" class="search-input" type="search" list="sellerItemOptions" placeholder="Item name">
+            </label>
+
+            <label class="select-shell" for="sellerQuantityInput">
+              <span class="control-label">Quantity</span>
+              <input id="sellerQuantityInput" class="select-input" type="number" min="1" step="1" value="1">
+            </label>
+
+            <label class="select-shell" for="sellerBuyPriceInput">
+              <span class="control-label">Buy price</span>
+              <input id="sellerBuyPriceInput" class="select-input" type="number" min="0" step="0.01" value="0">
+            </label>
+
+            <label class="select-shell" for="sellerSellPriceInput">
+              <span class="control-label">Sell price</span>
+              <input id="sellerSellPriceInput" class="select-input" type="number" min="0" step="0.01" value="0">
+            </label>
+
+            <label class="select-shell" for="sellerPlatformInput">
+              <span class="control-label">Platform</span>
+              <input id="sellerPlatformInput" class="select-input" type="text" placeholder="eBay, Discord, etc">
+            </label>
+
+            <label class="select-shell" for="sellerSupplierInput">
+              <span class="control-label">Supplier</span>
+              <input id="sellerSupplierInput" class="select-input" type="text" placeholder="Supplier name">
+            </label>
+
+            <label class="select-shell" for="sellerStatusInput">
+              <span class="control-label">Status</span>
+              <select id="sellerStatusInput" class="select-input">
+                <option value="in-stock">In stock</option>
+                <option value="sold">Sold</option>
+              </select>
+            </label>
+
+            <div class="seller-form-actions">
+              <button id="sellerAddButton" class="refresh-button" type="button">Add Entry</button>
+              <button id="sellerClearButton" class="trade-clear-button" type="button">Clear All</button>
+            </div>
+          </div>
+          <datalist id="sellerItemOptions"></datalist>
+        </section>
+
+        <section class="seller-summary-grid">
+          <div class="summary-card">
+            <span>Total inventory cost</span>
+            <strong id="sellerInventoryCost">€0.00</strong>
+          </div>
+          <div class="summary-card">
+            <span>Estimated sale value</span>
+            <strong id="sellerEstimatedValue">€0.00</strong>
+          </div>
+          <div class="summary-card">
+            <span>Profit</span>
+            <strong id="sellerProfit">€0.00</strong>
+          </div>
+          <div class="summary-card">
+            <span>ROI</span>
+            <strong id="sellerRoi">0%</strong>
+          </div>
+          <div class="summary-card">
+            <span>Dead stock</span>
+            <strong id="sellerDeadStock">0</strong>
+          </div>
+          <div class="summary-card">
+            <span>This month revenue</span>
+            <strong id="sellerMonthlyRevenue">€0.00</strong>
+          </div>
+        </section>
+
+        <section class="seller-layout">
+          <div class="seller-panel seller-records-panel">
+            <div class="inventory-panel-head">
+              <div>
+                <p class="eyebrow">Entries</p>
+                <h3 class="trade-side-title">Seller Records</h3>
+              </div>
+            </div>
+            <div id="sellerRecordsList" class="seller-records-list"></div>
+          </div>
+
+          <div class="seller-panel">
+            <div class="inventory-panel-head">
+              <div>
+                <p class="eyebrow">Best Sellers</p>
+                <h3 class="trade-side-title">Top Sold Items</h3>
+              </div>
+            </div>
+            <div id="sellerBestItemsList" class="inventory-stats-list"></div>
+          </div>
+
+          <div class="seller-panel">
+            <div class="inventory-panel-head">
+              <div>
+                <p class="eyebrow">Monthly Revenue</p>
+                <h3 class="trade-side-title">Revenue By Month</h3>
+              </div>
+            </div>
+            <div id="sellerRevenueList" class="inventory-stats-list"></div>
+          </div>
+        </section>
+      </section>
+
+      <section id="changesView" class="changes-view hidden" aria-live="polite">
+        <header class="subpage-hero">
+          <div>
+            <p class="eyebrow">Recent Changes</p>
+            <h2 class="subpage-title">See which tracked items moved most recently.</h2>
+            <p class="subpage-copy">
+              Changes are calculated from your stored history, so this page gets better as the tracker keeps refreshing over time.
+            </p>
+          </div>
+        </header>
+
+        <div id="changesList" class="changes-list"></div>
+      </section>
+
+      <section id="toolsView" class="tools-view hidden" aria-live="polite">
+        <header class="subpage-hero">
+          <div>
+            <p class="eyebrow">Tools</p>
+            <h2 class="subpage-title">Quick tools and shortcuts around the tracker.</h2>
+            <p class="subpage-copy">
+              Use this area for faster workflows while the rest of the app stays focused on values, charts, and trade checks.
+            </p>
+          </div>
+        </header>
+
+        <div class="tools-grid">
+          <article class="tool-card">
+            <p class="eyebrow">Trade Checker</p>
+            <h3>Compare two sides of a trade</h3>
+            <p>Open the dedicated checker with quantity-aware Supreme totals.</p>
+            <button id="openTradeToolButton" class="refresh-button tool-button" type="button">Open Trade Checker</button>
+          </article>
+
+          <article class="tool-card">
+            <p class="eyebrow">Favorites</p>
+            <h3>Jump to pinned items fast</h3>
+            <p>Return to the main board and focus on the items you pinned for daily tracking.</p>
+            <button id="openBoardToolButton" class="refresh-button tool-button" type="button">Open Board</button>
+          </article>
+
+          <article class="tool-card">
+            <p class="eyebrow">Inventory Tracker</p>
+            <h3>Break down your own holdings</h3>
+            <p>
+              Track your total Supreme value, category split, biggest stacks, duplicates, and overall inventory movement.
+            </p>
+            <button id="openInventoryToolButton" class="refresh-button tool-button" type="button">Open Inventory</button>
+          </article>
+
+          <article class="tool-card">
+            <p class="eyebrow">Seller Dashboard</p>
+            <h3>Track stock and profit</h3>
+            <p>Save selling entries and monitor inventory cost, ROI, dead stock, and monthly revenue.</p>
+            <button id="openSellerToolButton" class="refresh-button tool-button" type="button">Open Seller Dashboard</button>
+          </article>
+
+          <article class="tool-card">
+            <p class="eyebrow">Refresh</p>
+            <h3>Pull the latest source data</h3>
+            <p>Run a full refresh when you want updated Supreme values and current eBay listings.</p>
+            <button id="refreshToolButton" class="refresh-button tool-button" type="button">Refresh Data</button>
+          </article>
+        </div>
+      </section>
     </div>
 
     <template id="cardTemplate">
